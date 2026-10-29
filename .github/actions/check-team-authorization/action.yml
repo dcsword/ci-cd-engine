@@ -11,12 +11,16 @@ description: 'Verifies if the workflow actor is a member of a specified GitHub t
 inputs:
   team-slug:
     description: 'Team slug to check membership against'
-    required: true
+    required: false
   github-token:
     description: 'GitHub token with members:read permission'
     required: true
   organization:
     description: 'GitHub organization name (auto-detected if not provided)'
+    required: false
+    default: ''
+  authorized-user:
+    description: 'GitHub username allowed instead of team authorization'
     required: false
     default: ''
 outputs:
@@ -54,7 +58,8 @@ runs:
         
         TEAM_SLUG="${{ inputs.team-slug }}"
         ACTOR="${{ github.actor }}"
-        
+        AUTHORIZED_USER="${{ inputs.authorized-user }}"
+
         # Resolve EMU (Enterprise Managed User) suffix if present
         # EMU users have format USERNAME_SHORTCODE (e.g., johndoe_a1b2c3d4)
         # We validate by checking if the full actor name exists as a user
@@ -95,6 +100,23 @@ runs:
           echo "❌ ERROR: GitHub token is not set or empty"
           echo "authorized=false" >> $GITHUB_OUTPUT
           exit 1
+        fi
+
+        if [ -n "$AUTHORIZED_USER" ]; then
+          echo "Using user-based authorization"
+        
+          echo "user=$ACTOR" >> "$GITHUB_OUTPUT"
+          echo "organization=${{ github.repository_owner }}" >> "$GITHUB_OUTPUT"
+        
+          if [ "$ACTOR" = "$AUTHORIZED_USER" ]; then
+            echo "User '$ACTOR' is authorized"
+            echo "authorized=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          else
+            echo "User '$ACTOR' is not authorized"
+            echo "authorized=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
         fi
         
         # Check if user is member of the authorized team
