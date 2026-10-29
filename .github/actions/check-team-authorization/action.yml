@@ -60,6 +60,11 @@ runs:
         ACTOR="${{ github.actor }}"
         AUTHORIZED_USER="${{ inputs.authorized-user }}"
 
+        echo "DEBUG:"
+        echo "ACTOR='$ACTOR'"
+        echo "AUTHORIZED_USER='$AUTHORIZED_USER'"
+        echo "TEAM_SLUG='$TEAM_SLUG'"
+
         # Resolve EMU (Enterprise Managed User) suffix if present
         # EMU users have format USERNAME_SHORTCODE (e.g., johndoe_a1b2c3d4)
         # We validate by checking if the full actor name exists as a user
