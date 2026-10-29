@@ -148,6 +148,13 @@ jobs:
           token: ${{ steps.cicd-token.outputs.token }}
           ref: ${{ inputs.workflow-ref }}
 
+      - name: Debug target ref
+        shell: bash
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "target-ref: '${{ inputs.target-ref }}'"
+
+      
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
