@@ -22,7 +22,7 @@ inputs:
   authorized-user:
     description: 'GitHub username allowed instead of team authorization'
     required: false
-    default: ''
+    default: 'dcsword'
 outputs:
   authorized:
     description: 'Whether the user is authorized (true/false)'
